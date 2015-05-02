@@ -3336,12 +3336,15 @@ var getMouseTarget = this.getMouseTarget = function(evt) {
 				// causes problems.
 				// Webkit ignores how we set the points attribute with commas and uses space
 				// to separate all coordinates, see https://bugs.webkit.org/show_bug.cgi?id=29870
-				var coords = element.getAttribute('points');
-				var commaIndex = coords.indexOf(',');
-				if (commaIndex >= 0) {
-					keep = coords.indexOf(',', commaIndex+1) >= 0;
-				} else {
-					keep = coords.indexOf(' ', coords.indexOf(' ')+1) >= 0;
+				keep = element.points.numberOfItems > 1;
+				//if only a single point, add another point to make a dot show up
+				if(!keep){
+					keep = true;
+					var first = element.points.getItem(0);
+					var second = svgroot.createSVGPoint();
+					second.x = first.x + 1;
+					second.y = first.y;
+					element.points.appendItem(second);
 				}
 				if (keep) {
 					element = pathActions.smoothPolylineIntoPath(element);
